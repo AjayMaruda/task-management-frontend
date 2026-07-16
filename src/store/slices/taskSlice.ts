@@ -111,6 +111,8 @@ const normalizeTask = (t: any): Task => {
   };
 };
 
+
+
 export const fetchTasksThunk = createAsyncThunk<
   FetchTasksResult,
   FetchTasksParams | void,
@@ -159,8 +161,8 @@ export const fetchTasksThunk = createAsyncThunk<
 export const createTaskThunk = createAsyncThunk<
   Task,
   CreateTaskPayload,
-  { rejectValue: string; dispatch: any }
->('tasks/createTask', async (taskData, { rejectWithValue, dispatch }) => {
+  { rejectValue: string; dispatch: any; getState: any }
+>('tasks/createTask', async (taskData, { rejectWithValue, dispatch, getState }) => {
   try {
     const payload = {
       status: 'todo',
@@ -175,7 +177,9 @@ export const createTaskThunk = createAsyncThunk<
       id: raw.id || raw._id || `task-${Date.now()}`,
     });
 
-    dispatch(fetchTasksThunk());
+    // Refresh list using last known params so sort/filter/page context is preserved
+    const state = getState() as { tasks: TaskState };
+    dispatch(fetchTasksThunk(state.tasks.lastFetchParams));
 
     return normalized;
   } catch {
@@ -186,8 +190,8 @@ export const createTaskThunk = createAsyncThunk<
 export const updateTaskThunk = createAsyncThunk<
   Task,
   UpdateTaskPayload,
-  { rejectValue: string; dispatch: any }
->('tasks/updateTask', async ({ id, ...updateData }, { rejectWithValue, dispatch }) => {
+  { rejectValue: string; dispatch: any; getState: any }
+>('tasks/updateTask', async ({ id, ...updateData }, { rejectWithValue, dispatch, getState }) => {
   try {
     const payload = {
       ...updateData,
@@ -197,7 +201,9 @@ export const updateTaskThunk = createAsyncThunk<
     const raw = extractSingleTask(response.data, id);
     const normalized = normalizeTask({ ...updateData, ...raw, id: raw.id || raw._id || id });
 
-    dispatch(fetchTasksThunk());
+    // Refresh list using last known params so sort/filter/page context is preserved
+    const state = getState() as { tasks: TaskState };
+    dispatch(fetchTasksThunk(state.tasks.lastFetchParams));
 
     return normalized;
   } catch {
@@ -208,11 +214,13 @@ export const updateTaskThunk = createAsyncThunk<
 export const deleteTaskThunk = createAsyncThunk<
   string,
   string,
-  { rejectValue: string; dispatch: any }
->('tasks/deleteTask', async (id, { rejectWithValue, dispatch }) => {
+  { rejectValue: string; dispatch: any; getState: any }
+>('tasks/deleteTask', async (id, { rejectWithValue, dispatch, getState }) => {
   try {
     await apiService.delete(API_ROUTES.TASKS.DELETE(id));
-    dispatch(fetchTasksThunk());
+    // Refresh list using last known params so sort/filter/page context is preserved
+    const state = getState() as { tasks: TaskState };
+    dispatch(fetchTasksThunk(state.tasks.lastFetchParams));
     return id;
   } catch {
     return rejectWithValue('Failed to delete task.');

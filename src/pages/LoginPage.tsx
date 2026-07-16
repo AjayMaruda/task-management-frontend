@@ -25,7 +25,7 @@ export const LoginPage: React.FC = () => {
   const authError = useAppSelector(selectAuthError);
 
   useEffect(() => {
-    if (isAuth) navigate("/", { replace: true });
+    if (isAuth) navigate("/dashboard", { replace: true });
   }, [isAuth, navigate]);
 
   const formik = useFormik<LoginFormValues>({
@@ -36,8 +36,10 @@ export const LoginPage: React.FC = () => {
         await dispatch(
           loginThunk({ email: values.email, password: values.password }),
         ).unwrap();
-        dispatch(addToast({ type: "success", message: "Successfully logged in!" }));
-        navigate("/", { replace: true });
+        dispatch(
+          addToast({ type: "success", message: "Successfully logged in!" }),
+        );
+        navigate("/dashboard", { replace: true });
       } catch {
         // The rejected thunk stores and displays the auth error.
       }

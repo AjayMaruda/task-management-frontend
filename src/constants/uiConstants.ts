@@ -38,9 +38,9 @@ export const TASK_PAGE_TEXT = {
   logout: "Logout",
   workspaceTitle: "Task Workspace",
   workspaceDescription:
-    "Create, organize, and track your daily tasks using our sleek dashboard built with PrimeReact interactive components, Formik validation, and Tailwind CSS.",
+    "Optimize your productivity, organize project priorities, and monitor performance in real-time with our sleek task management dashboard.",
   totalTasks: "Total Tasks",
-  footer: "TaskFlow Workspace. Driven by React, PrimeReact, & Tailwind CSS.",
+  footer: "TaskFlow Workspace by Ajay Maruda.",
 };
 
 export const TASK_FORM_TEXT = {

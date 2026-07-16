@@ -1,0 +1,62 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  workflow_dispatch:  # allows manual trigger from GitHub UI
+
+jobs:
+  ci:
+    name: Lint, Type-check & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout source ────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Node.js ─────────────────────────────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ── 3. Install dependencies (skip Husky in CI) ────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+        env:
+          HUSKY: 0   # prevent Husky from installing hooks in CI
+
+      # ── 4. ESLint — zero warnings allowed ────────────────────────────────────
+      - name: Run ESLint
+        run: npm run lint -- --max-warnings=0
+
+      # ── 5. TypeScript type-check ──────────────────────────────────────────────
+      - name: Run TypeScript type-check
+        run: npm run type-check
+
+      # ── 6. Check for console.log statements ───────────────────────────────────
+      - name: Check for console.log
+        run: |
+          FOUND=$(grep -rnw --include="*.ts" --include="*.tsx" "console.log" src/ || true)
+          if [ -n "$FOUND" ]; then
+            echo "❌ console.log found in source files:"
+            echo "$FOUND"
+            exit 1
+          fi
+          echo "✅ No console.log found."
+
+      # ── 7. Production build ───────────────────────────────────────────────────
+      - name: Build
+        run: npm run build
+
+      # ── 8. Upload build artifact ──────────────────────────────────────────────
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist/
+          retention-days: 7
