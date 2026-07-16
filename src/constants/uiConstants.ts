@@ -23,6 +23,15 @@ export const LOGIN_TEXT = {
   signIn: "Sign in",
 };
 
+export const REGISTER_TEXT = {
+  title: "Create an account",
+  subtitle: "Sign up to get started",
+  haveAccount: "Already have an account?",
+  login: "Sign in",
+  signingUp: "Creating account...",
+  signUp: "Create account",
+};
+
 export const TASK_PAGE_TEXT = {
   progress: "Progress",
   completed: "Completed",
@@ -47,6 +56,8 @@ export const TASK_LIST_TEXT = {
 };
 
 export const FORM_LABELS = {
+  name: "Full Name",
+  phone: "Phone Number",
   email: "Email address",
   password: "Password",
   taskTitle: "Task Title",
@@ -72,6 +83,8 @@ export const TABLE_HEADERS = {
 export const VALIDATION_MESSAGES = {
   emailRequired: "Email is required",
   emailInvalid: "Enter a valid email address",
+  phoneRequired: "Phone number is required",
+  phoneInvalid: "Enter a valid phone number",
   passwordRequired: "Password is required",
   passwordMinLength: "Password must be at least 8 characters",
   titleRequired: "Title is required",

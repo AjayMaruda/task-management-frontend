@@ -5,6 +5,13 @@ export interface LoginFormValues {
   password: string;
 }
 
+export interface RegisterFormValues {
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+}
+
 export interface TaskFormValues {
   title: string;
   description: string;
@@ -14,6 +21,36 @@ export interface TaskFormValues {
 
 export const validateLoginForm = (values: LoginFormValues) => {
   const errors: Partial<LoginFormValues> = {};
+
+  if (!values.email) {
+    errors.email = VALIDATION_MESSAGES.emailRequired;
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+    errors.email = VALIDATION_MESSAGES.emailInvalid;
+  }
+
+  if (!values.password) {
+    errors.password = VALIDATION_MESSAGES.passwordRequired;
+  } else if (values.password.length < 8) {
+    errors.password = VALIDATION_MESSAGES.passwordMinLength;
+  }
+
+  return errors;
+};
+
+export const validateRegisterForm = (values: RegisterFormValues) => {
+  const errors: Partial<RegisterFormValues> = {};
+
+  if (!values.name) {
+    errors.name = "Name is required";
+  } else if (values.name.length < 3) {
+    errors.name = "Name must be at least 3 characters";
+  }
+
+  if (!values.phone) {
+    errors.phone = VALIDATION_MESSAGES.phoneRequired;
+  } else if (!/^\+?[0-9]{7,15}$/.test(values.phone)) {
+    errors.phone = VALIDATION_MESSAGES.phoneInvalid;
+  }
 
   if (!values.email) {
     errors.email = VALIDATION_MESSAGES.emailRequired;

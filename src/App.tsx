@@ -5,17 +5,14 @@ import { PrimeReactProvider } from '@primereact/core';
 import Aura from '@primeuix/themes/aura';
 import { store } from './store';
 import router from './routes';
-import { TaskProvider } from './context/TaskProvider';
 import { ToastManager } from './components/ToastManager';
 
 const App: React.FC = () => {
   return (
     <Provider store={store}>
       <PrimeReactProvider theme={{ preset: Aura }}>
-        <TaskProvider>
-          <ToastManager />
-          <RouterProvider router={router} />
-        </TaskProvider>
+        <ToastManager />
+        <RouterProvider router={router} />
       </PrimeReactProvider>
     </Provider>
   );

@@ -4,16 +4,17 @@ import { TaskForm } from '../components/TaskForm';
 import { TaskList } from '../components/TaskList';
 import { useTasks } from '../hooks/useTasks';
 import { BaseButton } from '../components/base/BaseButton';
-import { useAppDispatch } from '../store/hooks';
-import { logout } from '../store/slices/authSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { logout, selectAuthUser } from '../store/slices/authSlice';
 
 export const TasksPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { tasks } = useTasks();
+  const user = useAppSelector(selectAuthUser);
+  const { tasks, totalCount } = useTasks();
 
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(t => t.completed).length;
+  const totalTasks = totalCount || tasks.length;
+  const completedTasks = tasks.filter(t => t.status === 'done' || t.status === 'completed').length;
   const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   const handleLogout = () => {
@@ -28,11 +29,11 @@ export const TasksPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-              <i className="pi pi-check-square text-white text-xl"></i>
+              <span className="text-white font-bold text-lg">{user?.name ? user.name.charAt(0).toUpperCase() : (user?.email ? user.email.charAt(0).toUpperCase() : 'U')}</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-white m-0">TaskFlow</h1>
-              <p className="text-xs text-slate-400 m-0">Premium Workspace Dashboard</p>
+              <h1 className="text-xl font-bold tracking-tight text-white m-0">{user?.name || (user?.email ? user.email.split('@')[0] : 'TaskFlow User')}</h1>
+              <p className="text-xs text-slate-400 m-0">{user?.email || 'Premium Workspace Dashboard'}</p>
             </div>
           </div>
 

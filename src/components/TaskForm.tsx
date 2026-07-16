@@ -19,15 +19,19 @@ export const TaskForm: React.FC = () => {
     validate: validateTaskForm,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      addTask({
-        title: values.title.trim(),
-        description: values.description.trim(),
-        dueDate: values.dueDate,
-        priority: values.priority,
-      });
-      resetForm();
-      setIsSubmitting(false);
+      try {
+        await addTask({
+          title: values.title.trim(),
+          description: values.description.trim(),
+          dueDate: values.dueDate,
+          priority: values.priority,
+        });
+        resetForm();
+      } catch (err) {
+        console.error('Failed to create task:', err);
+      } finally {
+        setIsSubmitting(false);
+      }
     },
   });
 

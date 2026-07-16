@@ -5,19 +5,19 @@ import { BaseInput } from "../components/base/BaseInput";
 import { BaseButton } from "../components/base/BaseButton";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
-  loginThunk,
+  registerThunk,
   clearAuthError,
   selectIsAuthenticated,
   selectAuthLoading,
   selectAuthError,
 } from "../store/slices/authSlice";
 import { addToast } from "../store/slices/uiSlice";
-import { APP_TEXT, FORM_LABELS, LOGIN_TEXT } from "../constants/uiConstants";
+import { APP_TEXT, FORM_LABELS, REGISTER_TEXT } from "../constants/uiConstants";
 import { getPlaceholder } from "../constants/placeholders";
-import { validateLoginForm } from "../utils/validation";
-import type { LoginFormValues } from "../utils/validation";
+import { validateRegisterForm } from "../utils/validation";
+import type { RegisterFormValues } from "../utils/validation";
 
-export const LoginPage: React.FC = () => {
+export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const isAuth = useAppSelector(selectIsAuthenticated);
@@ -28,18 +28,18 @@ export const LoginPage: React.FC = () => {
     if (isAuth) navigate("/", { replace: true });
   }, [isAuth, navigate]);
 
-  const formik = useFormik<LoginFormValues>({
-    initialValues: { email: "", password: "" },
-    validate: validateLoginForm,
+  const formik = useFormik<RegisterFormValues>({
+    initialValues: { name: "", phone: "", email: "", password: "" },
+    validate: validateRegisterForm,
     onSubmit: async (values) => {
       try {
         await dispatch(
-          loginThunk({ email: values.email, password: values.password }),
+          registerThunk({ name: values.name, phone: values.phone, email: values.email, password: values.password }),
         ).unwrap();
-        dispatch(addToast({ type: "success", message: "Successfully logged in!" }));
-        navigate("/", { replace: true });
+        dispatch(addToast({ type: "success", message: "Account created successfully! Please sign in." }));
+        navigate("/login");
       } catch {
-        // The rejected thunk stores and displays the auth error.
+        // Auth error is handled globally by toaster or auth slice.
       }
     },
   });
@@ -69,8 +69,8 @@ export const LoginPage: React.FC = () => {
 
         <div className="bg-slate-800/70 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 shadow-2xl shadow-slate-900/60">
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-white">{LOGIN_TEXT.title}</h2>
-            <p className="text-slate-400 text-sm mt-1">{LOGIN_TEXT.subtitle}</p>
+            <h2 className="text-xl font-bold text-white">{REGISTER_TEXT.title}</h2>
+            <p className="text-slate-400 text-sm mt-1">{REGISTER_TEXT.subtitle}</p>
           </div>
 
           <form
@@ -78,6 +78,36 @@ export const LoginPage: React.FC = () => {
             noValidate
             className="flex flex-col gap-5"
           >
+            <BaseInput
+              id="name"
+              name="name"
+              type="text"
+              label={FORM_LABELS.name}
+              placeholder={getPlaceholder(FORM_LABELS.name)}
+              required
+              autoComplete="name"
+              value={formik.values.name}
+              onChange={handleFieldChange}
+              onBlur={formik.handleBlur}
+              touched={formik.touched.name}
+              error={formik.errors.name}
+            />
+
+            <BaseInput
+              id="phone"
+              name="phone"
+              type="tel"
+              label={FORM_LABELS.phone}
+              placeholder={getPlaceholder(FORM_LABELS.phone)}
+              required
+              autoComplete="tel"
+              value={formik.values.phone}
+              onChange={handleFieldChange}
+              onBlur={formik.handleBlur}
+              touched={formik.touched.phone}
+              error={formik.errors.phone}
+            />
+
             <BaseInput
               id="email"
               name="email"
@@ -100,7 +130,7 @@ export const LoginPage: React.FC = () => {
               label={FORM_LABELS.password}
               placeholder={getPlaceholder(FORM_LABELS.password)}
               required
-              autoComplete="current-password"
+              autoComplete="new-password"
               value={formik.values.password}
               onChange={handleFieldChange}
               onBlur={formik.handleBlur}
@@ -114,10 +144,10 @@ export const LoginPage: React.FC = () => {
               size="md"
               fullWidth
               loading={isLoading}
-              leftIcon="pi pi-sign-in"
+              leftIcon="pi pi-user-plus"
               className="mt-1"
             >
-              {isLoading ? LOGIN_TEXT.signingIn : LOGIN_TEXT.signIn}
+              {isLoading ? REGISTER_TEXT.signingUp : REGISTER_TEXT.signUp}
             </BaseButton>
           </form>
 
@@ -126,13 +156,13 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <p className="text-center text-slate-400 text-sm">
-            {LOGIN_TEXT.noAccount}{" "}
+            {REGISTER_TEXT.haveAccount}{" "}
             <button
               type="button"
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/login")}
               className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors cursor-pointer bg-transparent border-none p-0"
             >
-              {LOGIN_TEXT.createAccount}
+              {REGISTER_TEXT.login}
             </button>
           </p>
         </div>
