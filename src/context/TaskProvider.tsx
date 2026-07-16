@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { taskService } from '../services/taskService';
 import type { Task } from '../services/taskService';
-import { TaskContext } from './TaskContext';
+import { TaskContext } from './TaskContextCore';
 
 export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Lazy initializer: reads localStorage once on mount — no useEffect needed
+  // Lazy initializer: reads localStorage once on mount, so no effect is needed.
   const [tasks, setTasks] = useState<Task[]>(() => taskService.getTasks());
 
   const addTask = (newTaskData: Omit<Task, 'id' | 'completed' | 'createdAt'>) => {
