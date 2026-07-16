@@ -28,7 +28,7 @@ export const TaskForm: React.FC = () => {
         });
         resetForm();
       } catch (err) {
-        console.error('Failed to create task:', err);
+        console.error("Failed to create task:", err);
       } finally {
         setIsSubmitting(false);
       }
