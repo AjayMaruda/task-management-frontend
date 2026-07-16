@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useFormik } from 'formik';
-import { useTasks } from '../hooks/useTasks';
-import { validateTaskForm } from '../utils/validators';
-import type { TaskFormValues } from '../utils/validators';
-import { BaseInput, BaseTextarea, BaseButton } from './base';
+import React, { useState } from "react";
+import { useFormik } from "formik";
+import { useTasks } from "../hooks/useTasks";
+import { validateTaskForm } from "../utils/validation";
+import type { TaskFormValues } from "../utils/validation";
+import { BaseInput, BaseTextarea, BaseButton } from "./base";
 
 export const TaskForm: React.FC = () => {
   const { addTask } = useTasks();
@@ -11,15 +11,14 @@ export const TaskForm: React.FC = () => {
 
   const formik = useFormik<TaskFormValues>({
     initialValues: {
-      title: '',
-      description: '',
-      dueDate: '',
-      priority: 'medium',
+      title: "",
+      description: "",
+      dueDate: "",
+      priority: "medium",
     },
     validate: validateTaskForm,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
-      // Simulate async operation (replace with real API call if needed)
       await new Promise((resolve) => setTimeout(resolve, 800));
       addTask({
         title: values.title.trim(),
@@ -43,7 +42,6 @@ export const TaskForm: React.FC = () => {
         Create New Task
       </h2>
 
-      {/* Task Title */}
       <BaseInput
         id="title"
         name="title"
@@ -94,7 +92,11 @@ export const TaskForm: React.FC = () => {
             className="block text-slate-300 text-sm font-medium mb-1.5 select-none"
           >
             Priority Level
-            <span className="text-rose-500 ml-0.5" aria-hidden="true" title="Required">
+            <span
+              className="text-rose-500 ml-0.5"
+              aria-hidden="true"
+              title="Required"
+            >
               *
             </span>
           </label>
@@ -107,14 +109,14 @@ export const TaskForm: React.FC = () => {
             aria-required
             aria-invalid={formik.touched.priority && !!formik.errors.priority}
             className={[
-              'w-full px-3 py-2.5 rounded-lg text-slate-200 text-sm',
-              'bg-slate-900 border outline-none',
-              'transition-all duration-200',
-              'focus:ring-2',
+              "w-full px-3 py-2.5 rounded-lg text-slate-200 text-sm",
+              "bg-slate-900 border outline-none",
+              "transition-all duration-200",
+              "focus:ring-2",
               formik.touched.priority && formik.errors.priority
-                ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20 bg-rose-500/5'
-                : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20',
-            ].join(' ')}
+                ? "border-rose-500 focus:border-rose-500 focus:ring-rose-500/20 bg-rose-500/5"
+                : "border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20",
+            ].join(" ")}
           >
             <option value="low">Low Priority</option>
             <option value="medium">Medium Priority</option>
@@ -122,7 +124,12 @@ export const TaskForm: React.FC = () => {
           </select>
           {formik.touched.priority && formik.errors.priority && (
             <span className="text-rose-400 text-xs mt-1.5 flex items-center gap-1">
-              <svg className="shrink-0 w-3 h-3" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <svg
+                className="shrink-0 w-3 h-3"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                aria-hidden="true"
+              >
                 <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 10.5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5zM7.25 5.5a.75.75 0 0 1 1.5 0v3a.75.75 0 0 1-1.5 0v-3z" />
               </svg>
               {formik.errors.priority}
@@ -140,7 +147,7 @@ export const TaskForm: React.FC = () => {
         leftIcon="pi pi-check"
         className="mt-2"
       >
-        {isSubmitting ? 'Creating…' : 'Create Task'}
+        {isSubmitting ? "Creating…" : "Create Task"}
       </BaseButton>
     </form>
   );

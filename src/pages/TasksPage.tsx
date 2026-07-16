@@ -1,14 +1,25 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TaskForm } from '../components/TaskForm';
 import { TaskList } from '../components/TaskList';
 import { useTasks } from '../hooks/useTasks';
+import { BaseButton } from '../components/base/BaseButton';
+import { useAppDispatch } from '../store/hooks';
+import { logout } from '../store/slices/authSlice';
 
 export const TasksPage: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { tasks } = useTasks();
 
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter(t => t.completed).length;
   const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
@@ -26,7 +37,7 @@ export const TasksPage: React.FC = () => {
           </div>
 
           {/* Quick Stats */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             <div className="text-right hidden sm:block">
               <span className="block text-xs text-slate-400 uppercase tracking-wider font-semibold">Progress</span>
               <span className="text-sm font-bold text-slate-200">
@@ -39,6 +50,15 @@ export const TasksPage: React.FC = () => {
                 style={{ width: `${completionPercentage}%` }}
               ></div>
             </div>
+            <BaseButton
+              type="button"
+              variant="ghost"
+              size="sm"
+              leftIcon="pi pi-sign-out"
+              onClick={handleLogout}
+            >
+              Logout
+            </BaseButton>
           </div>
         </div>
       </header>
