@@ -29,15 +29,20 @@ const router = createBrowserRouter([
     errorElement: <RouteErrorPage />,
     children: [
       {
+        // Root path redirects into the dashboard
+        path: "/",
+        element: <Navigate to="/dashboard" replace />,
+      },
+      {
         path: "/dashboard",
         element: <TasksPage />,
       },
     ],
   },
   {
-    // Catch-all: unknown paths go to home (ProtectedRoute handles auth check)
+    // Catch-all: unknown paths redirect to login
     path: "*",
-    element: <Navigate to="/" replace />,
+    element: <Navigate to="/login" replace />,
   },
 ]);
 
