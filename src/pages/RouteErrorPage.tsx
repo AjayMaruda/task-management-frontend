@@ -9,13 +9,17 @@ interface RouteError {
 }
 
 export const RouteErrorPage: React.FC = () => {
-  const error = useRouteError() as RouteError | string | null;
+  const error = useRouteError();
   const navigate = useNavigate();
 
-  const errorMessage =
-    error?.statusText ||
-    error?.message ||
-    (typeof error === 'string' ? error : 'An unexpected error occurred in the application.');
+  const errorMessage = (() => {
+    if (typeof error === 'string') return error;
+    if (error !== null && typeof error === 'object') {
+      const e = error as RouteError;
+      return e.statusText ?? e.message ?? 'An unexpected error occurred.';
+    }
+    return 'An unexpected error occurred in the application.';
+  })();
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden">
